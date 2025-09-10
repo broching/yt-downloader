@@ -12,7 +12,6 @@ WORKDIR /app
 # Set production environment
 ENV NODE_ENV="production"
 
-
 # Throw-away build stage to reduce size of final image
 FROM base AS build
 
@@ -27,6 +26,8 @@ RUN npm ci
 # Copy application code
 COPY . .
 
+# Make the Linux yt-dlp binary executable
+RUN chmod +x ./bin/yt-dlp_linux
 
 # Final stage for app image
 FROM base
@@ -34,6 +35,8 @@ FROM base
 # Copy built application
 COPY --from=build /app /app
 
-# Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
-CMD [ "npm", "run", "start" ]
+# Expose the backend port
+EXPOSE 8080
+
+# Start the server by default
+CMD ["npm", "run", "start"]
