@@ -5,6 +5,18 @@ const yup = require("yup");
 const { PassThrough } = require("stream");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
+const os = require("os");
+
+/** ========= Helpers ========= */
+// Pick binary based on OS
+const getYtDlpBinary = () => {
+  const platform = os.platform();
+  if (platform === "win32") {
+    return path.join(__dirname, "../bin/yt-dlp.exe");
+  } else {
+    return path.join(__dirname, "../bin/yt-dlp_linux"); // Make sure this is executable on Linux
+  }
+};
 
 /** ========= Validators ========= */
 const infoSchema = yup.object({
@@ -30,7 +42,7 @@ const downloadSchema = yup.object({
 
 // Test yt-dlp binary
 router.get("/test-binary", (req, res) => {
-  const ytDlpPath = path.join(__dirname, "../bin/yt-dlp.exe"); // adjust path if needed
+  const ytDlpPath = getYtDlpBinary();
 
   const dl = spawn(ytDlpPath, ["--version"]);
 
@@ -58,34 +70,23 @@ router.get("/formats", async (req, res) => {
   if (!url) return res.status(400).json({ error: "URL query parameter is required" });
 
   try {
-    // Validate URL
     await infoSchema.validate({ url });
+    const ytDlpPath = getYtDlpBinary();
 
-    const ytDlpPath = path.join(__dirname, "../bin/yt-dlp.exe"); // adjust path if needed
-
-    // Spawn yt-dlp to dump JSON info
     const dl = spawn(ytDlpPath, ["-j", url]);
-
     let output = "";
     let errorOutput = "";
 
-    dl.stdout.on("data", (chunk) => {
-      output += chunk.toString();
-    });
-
-    dl.stderr.on("data", (chunk) => {
-      errorOutput += chunk.toString();
-    });
+    dl.stdout.on("data", (chunk) => (output += chunk.toString()));
+    dl.stderr.on("data", (chunk) => (errorOutput += chunk.toString()));
 
     dl.on("close", (code) => {
       if (code !== 0) {
         console.error("yt-dlp error:", errorOutput);
         return res.status(500).json({ error: "Failed to fetch formats" });
       }
-
       try {
         const info = JSON.parse(output);
-
         const formats = info.formats.map((f) => ({
           itag: f.format_id,
           resolution: f.format_note || (f.height ? `${f.height}p` : "audio"),
@@ -95,7 +96,6 @@ router.get("/formats", async (req, res) => {
           vcodec: f.vcodec,
           acodec: f.acodec,
         }));
-
         res.json({ title: info.title, formats });
       } catch (err) {
         console.error("JSON parse error:", err);
@@ -108,72 +108,55 @@ router.get("/formats", async (req, res) => {
   }
 });
 
-/** ========= GET /api/downloadMedia ========= */
+// GET /api/downloadMedia
 router.get("/downloadMedia", async (req, res) => {
   try {
-    // Extract query params
     const { url, itag, ext, isVideo, start, end } = req.query;
 
-    // Validate inputs using yup
     await downloadSchema.validate({
       url,
       itag,
       ext,
-      isVideo: isVideo === "true", // convert from string
+      isVideo: isVideo === "true",
       start,
       end,
     });
 
     const pass = new PassThrough();
-    const ytDlpPath = path.join(__dirname, "../bin/yt-dlp.exe"); // Adjust path if needed
+    const ytDlpPath = getYtDlpBinary();
 
-    // Build yt-dlp args
     let format = isVideo === "true" ? `${itag}+bestaudio/best` : itag;
     const args = ["-f", format, "-o", "-", "--force-keyframes-at-cuts"];
+    if (start && end) args.push("--download-sections", `*${start}-${end}`);
 
-    if (start && end) {
-      args.push("--download-sections", `*${start}-${end}`);
-    }
-
-    // Spawn yt-dlp process
     const dl = spawn(ytDlpPath, [...args, url], { stdio: ["ignore", "pipe", "pipe"] });
 
-    // Log progress from stderr
     dl.stderr.on("data", (chunk) => {
       const msg = chunk.toString().trim();
       if (msg) console.log(`[yt-dlp] ${msg}`);
     });
 
-    // Pipe stdout to PassThrough
     dl.stdout.pipe(pass);
 
-    let uuid = uuidv4();
-
-    // Set headers for immediate download
+    const uuid = uuidv4();
     res.setHeader("Content-Disposition", `attachment; filename="downloadVideo${uuid}.${ext}"`);
     res.setHeader("Content-Type", isVideo === "true" ? "video/mp4" : "audio/mpeg");
 
-    // Pipe to response
     pass.pipe(res);
 
-    // Handle errors
     dl.on("error", (err) => {
       console.error("yt-dlp error:", err);
       res.status(500).json({ error: "Failed to download media" });
     });
 
     dl.on("close", (code) => {
-      if (code !== 0) {
-        console.error(`yt-dlp exited with code ${code}`);
-      } else {
-        console.log("Download finished successfully!");
-      }
+      if (code !== 0) console.error(`yt-dlp exited with code ${code}`);
+      else console.log("Download finished successfully!");
     });
   } catch (err) {
     console.error(err);
     res.status(400).json({ error: err.message || "Invalid request" });
   }
 });
-
 
 module.exports = router;
