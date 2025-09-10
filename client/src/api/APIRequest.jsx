@@ -63,6 +63,6 @@ export class APIRequest {
 
 }
 
-const api = new APIRequest(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080');
+const api = new APIRequest(`${import.meta.env.VITE_API_BASE_URL}`);
 
 export default api;
