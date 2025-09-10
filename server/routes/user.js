@@ -16,6 +16,10 @@ const fs = require("fs");
 const { google } = require("googleapis");
 const { v4: uuidv4 } = require("uuid");
 
+router.get("/test", (req, res) => {
+    res.json({ message: "User route is working!" });
+});
+
 
 router.post("/create_user", cors(), async (req, res) => {
     const data = req.body;
