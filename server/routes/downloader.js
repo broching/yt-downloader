@@ -126,7 +126,15 @@ router.get("/downloadMedia", async (req, res) => {
     const ytDlpPath = getYtDlpBinary();
 
     let format = isVideo === "true" ? `${itag}+bestaudio/best` : itag;
-    const args = ["-f", format, "-o", "-", "--force-keyframes-at-cuts"];
+    const args =
+      ["-f",
+        format,
+        "-o",
+        "-",
+        "--force-keyframes-at-cuts",
+        "--user-agent",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5845.111 Safari/537.36"
+      ];
     if (start && end) args.push("--download-sections", `*${start}-${end}`);
 
     const dl = spawn(ytDlpPath, [...args, url], { stdio: ["ignore", "pipe", "pipe"] });
