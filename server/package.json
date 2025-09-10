@@ -19,13 +19,20 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
     "fs": "^0.0.1-security",
     "googleapis": "^149.0.0",
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.16.0",
+    "morgan": "^1.10.1",
+    "newsapi": "^2.4.1",
+    "node-cron": "^4.2.1",
     "path": "^0.12.7",
     "uuid": "^11.1.0",
-    "yup": "^1.6.1"
+    "yt-dlp-exec": "^1.0.2",
+    "ytdl-core": "^4.11.5",
+    "yup": "^1.7.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

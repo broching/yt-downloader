@@ -2,15 +2,8 @@ import { useState, useContext, useEffect } from "react";
 import { Box, IconButton, List, ListItem, ListItemIcon, ListItemText, ListItemButton, Popover, Divider, Typography } from "@mui/material"
 import { Link, useNavigate } from "react-router-dom"
 import ProfilePicture from "./ProfilePicture";
-
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import PersonIcon from '@mui/icons-material/Person';
-import SupportIcon from '@mui/icons-material/Support';
-import { enqueueSnackbar } from "notistack";
 import { useUserContext } from "../../../contexts/UserContext";
 import { useAlert } from "../../../contexts/AlertContext";
 

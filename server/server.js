@@ -10,6 +10,8 @@ app.use(bodyParser.json());
 const user_routes = require("./routes/user");
 app.use("/user", user_routes);
 
+const downloader_routes = require("./routes/downloader");
+app.use("/downloader", downloader_routes);
 
 app.get('/', (req, res) => {
   res.send('Welcome to the server!');

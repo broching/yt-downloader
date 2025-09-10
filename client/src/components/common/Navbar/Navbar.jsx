@@ -2,19 +2,12 @@ import { useState, useContext } from "react"
 import { AppBar, Box, Container, Toolbar, IconButton, List, ListItem, ListItemIcon, ListItemText, ListItemButton, Typography, Divider, Drawer, Stack, Button } from "@mui/material"
 import MenuIcon from "@mui/icons-material/Menu"
 import HomeIcon from "@mui/icons-material/Home"
-import DirectionsBikeIcon from '@mui/icons-material/DirectionsBike';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-import StoreIcon from '@mui/icons-material/Store';
-import LoginIcon from '@mui/icons-material/Login';
 import { Link } from "react-router-dom"
-import { NavbarProfile } from "./NavbarProfile";
 import { useUserContext } from "../../../contexts/UserContext";
 import CloudIcon from '@mui/icons-material/Cloud';
 import PriceChangeIcon from '@mui/icons-material/PriceChange';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import Notification from "./Notification";
-import SocketConnection from "./SocketConnection";
-import LiveHelpIcon from '@mui/icons-material/LiveHelp';
+import YouTubeIcon from '@mui/icons-material/YouTube';
 
 export function Navbar() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -25,25 +18,29 @@ export function Navbar() {
     return (
         <>
             {// !isAdminPage &&
-                <AppBar position="sticky" sx={{ zIndex: 999, borderRadius: "0.5rem", maxWidth: "95%", margin: "0 auto", marginTop: ["1rem", "2rem"], top: ["1rem", "2rem"] }}>
+                <AppBar position="sticky" sx={{
+                    zIndex: 999,
+                    borderRadius: "0.5rem",
+                    width: "95%", maxWidth: "1250px",
+                    margin: "0 auto",
+                    marginTop: ["1rem", "2rem"],
+                    top: ["1rem", "2rem"],
+                    backgroundColor: "#FFE8E8",
+                    color: "gray"
+                }}>
                     <Toolbar>
                         <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
                             <IconButton color="inherit" sx={{ marginRight: "1rem", display: ["flex", "flex", "none"] }} onClick={() => setIsDrawerOpen(true)}><MenuIcon /></IconButton>
-                            <Button color="inherit" variant="text" LinkComponent={Link} to="/" sx={{ marginRight: "1rem", fontFamily: "'caveat brush'", textTransform: "none", fontSize: "18px", padding: "0" }}>EcoWise</Button>
+                            <Button color="inherit" variant="text" LinkComponent={Link} to="/" sx={{ marginRight: "1rem", fontFamily: "'poppins'", textTransform: "none", fontSize: "18px", padding: "0" }}>
+                                <YouTubeIcon sx={{ color: "#FF0000", fontSize: 36 }} />
+                                YoutubeDownloader
+                            </Button>
                             <Divider orientation="vertical" flexItem sx={{ marginRight: "1rem", display: ["none", "none", "flex"] }} />
                             <Stack spacing={2} direction="row" sx={{ display: ["none", "none", "flex"] }}>
-                                <Button startIcon={<HomeIcon />} LinkComponent={Link} variant="text" color="inherit" to="/">Home</Button>
-                                {IsLoggedIn() && <Button startIcon={<DashboardIcon />} LinkComponent={Link} variant="text" color="inherit" to="/dashboard">Dashboard</Button>}
-                                {IsLoggedIn() && <Button startIcon={<PriceChangeIcon />} LinkComponent={Link} variant="text" color="inherit" to="/budget">Budget</Button>}
-                                {(IsLoggedIn() && user?.role !== "admin") ? <Button startIcon={<LiveHelpIcon />} LinkComponent={Link} variant="text" color="inherit" to="/viewtickets">Support</Button> : <Button startIcon={<LiveHelpIcon />} LinkComponent={Link} variant="text" color="inherit" to="/adminviewtickets">Admin</Button>}
-                                <Button startIcon={<CloudIcon />} LinkComponent={Link} variant="text" color="inherit" to="/weatherpage">weather</Button>
+                                <Button startIcon={<HomeIcon />} LinkComponent={Link} variant="text" color="inherit" to="/about">About</Button>
                             </Stack>
                         </Box>
-                        {!IsLoggedIn() && <Button LinkComponent={Link} variant="text" color="inherit" to="/login" startIcon={<LoginIcon />}>Login</Button>}
-                        {IsLoggedIn() && <Notification />}
-                        {IsLoggedIn() && <SocketConnection />}
-                        {IsLoggedIn() && <NavbarProfile />}
-                        
+
                     </Toolbar>
                 </AppBar>
             }

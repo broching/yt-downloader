@@ -7,13 +7,13 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 function Footer() {
   return (
 
-    <AppBar position="static" component="footer" sx={{ backgroundColor: "primaryColor", py: 1}}>
+    <AppBar position="static" component="footer" sx={{ backgroundColor: "#FFE8E8", py: 1, color:"gray"}}>
       <CssBaseline />
       <Toolbar sx={{ flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center' }}>
         <Grid container spacing={2} sx={{ justifyContent: 'space-between', width: '100%' }}>
           <Grid item xs={12} sm={4}>
             <Typography variant="body1" align="center" fontFamily="Poppins" sx={{ mt: 1 }}>
-              © {new Date().getFullYear()} EcoWise
+              © {new Date().getFullYear()} YoutbeDownloader
             </Typography>
           </Grid>
           <Grid item xs={12} sm={4} sx={{ display: 'flex', justifyContent: 'center' }}>
